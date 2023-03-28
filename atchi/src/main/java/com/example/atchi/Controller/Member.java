@@ -19,12 +19,7 @@ public class Member {
     @GetMapping("/")
     public String getTest(){
         Date today = new Date();
-        MemberEntity member = new MemberEntity(0,"12548@naver.com","12345dsfjhw");
-        member.setName("김가은");
-        member.setBirthday(new Date());
-        member.setEmail("12548@naver.com");
-        member.setGender(Boolean.FALSE);
-        member.setPw("12345dsfjhw");
+        MemberEntity member = MemberEntity.builder().name("김가은").birthday(today).email("12548@naver.com").gender(Boolean.FALSE).pw("12345").id(0).build();
         MemberEntity member2 = memberrepository.save(member);
         return "hello";
     }
