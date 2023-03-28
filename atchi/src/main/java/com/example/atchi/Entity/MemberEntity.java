@@ -2,10 +2,7 @@ package com.example.atchi.Entity;
 //DB테이블과 직접 매칭될 클래스
 
 import com.sun.istack.NotNull;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +11,8 @@ import javax.persistence.Id;
 import java.util.Date;
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Entity(name="Member")
 public class MemberEntity {
@@ -28,6 +27,5 @@ public class MemberEntity {
     private Date birthday;
     private Boolean gender;
     private String name ;
-
 
 }
