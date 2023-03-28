@@ -5,10 +5,10 @@ import com.example.atchi.Dto.memberResponseDto;
 import com.example.atchi.Entity.MemberEntity;
 import com.example.atchi.Repository.MemberRepository;
 import com.example.atchi.Service.MemberService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 
@@ -30,10 +30,18 @@ public class MemberController {
         MemberEntity member4 = memberrepository.save(member3);
         return "hello";
     }
+
     @PostMapping("/signup")
-    public String goSignup(@RequestBody memberResponseDto member){
-        memberService.register(member);
-        return "success";
+    public ResponseEntity<String> goSignup(@RequestBody memberResponseDto member){
+        try{
+            memberService.register(member);
+            return ResponseEntity.ok("hello");
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+
+
     }
 }
 //    @Id
