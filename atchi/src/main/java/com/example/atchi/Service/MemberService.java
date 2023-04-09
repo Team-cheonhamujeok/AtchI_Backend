@@ -37,8 +37,6 @@ public class MemberService {
     public Integer login(loginResponseDto loginMember){
        List<MemberEntity> findMember = memberRepository.findByEmail(loginMember.getId());
        if(findMember.size()==1){
-           System.out.println(loginMember.getPw());
-           System.out.println(findMember.get(0).getPw());
            String loginPW = loginMember.getPw();
            String memberPW = findMember.get(0).getPw();
            if (loginPW.equals(memberPW)){

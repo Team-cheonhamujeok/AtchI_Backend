@@ -37,7 +37,7 @@ public class MemberController {
     public ResponseEntity<String> goSignup(@RequestBody memberResponseDto member){
         try{
             memberService.register(member);
-            return ResponseEntity.ok("hello");
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch(Exception e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -50,26 +50,34 @@ public class MemberController {
             Integer result =  memberService.login(loginMem);
             LoginResult loginResult = new LoginResult();
             loginResult.setMId(result);
-
-
+            System.out.println(result);
            if(result >= 0){ //정상적으로 Id값을 가져왔을 때
                // 0이면 -> 비밀번호 틀림, 1이상이면 -> mid 값
                return ResponseEntity.ok(loginResult);
            }else if(result == -1){ // 중복된 멤버가 있을 때
-               return (ResponseEntity<LoginResult>) ResponseEntity.notFound();
+               return new ResponseEntity<>(loginResult,HttpStatus.NOT_FOUND);
            }else if (result == -2){ //멤버가 없을 때
-
-               return (ResponseEntity<LoginResult>) ResponseEntity.notFound();
+               System.out.println(result);
+               return new ResponseEntity<>(loginResult,HttpStatus.NOT_FOUND);
             }else{
 
-               return (ResponseEntity<LoginResult>) ResponseEntity.notFound();
+               return new ResponseEntity<>(loginResult,HttpStatus.NOT_FOUND);
            }
         }catch(Exception e){
+            System.out.println(9);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
 
 
+    }
+    public ResponseEntity<String> logout(@RequestBody logoutResponseDto logoutMem){
+        try{
+
+            return (ResponseEntity<String>) ResponseEntity.ok();
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }
 
