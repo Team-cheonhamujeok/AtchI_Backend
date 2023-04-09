@@ -1,8 +1,8 @@
 package com.example.atchi.Controller;
 
-
-import com.example.atchi.Dto.memberResponseDto;
+import com.example.atchi.Dto.*;
 import com.example.atchi.Entity.MemberEntity;
+import com.example.atchi.Model.LoginResult;
 import com.example.atchi.Repository.MemberRepository;
 import com.example.atchi.Service.MemberService;
 import org.springframework.http.HttpStatus;
@@ -16,6 +16,8 @@ import java.util.Date;
 public class MemberController {
     private final MemberRepository memberrepository;
     private final MemberService memberService;
+
+
     public MemberController(MemberRepository memberrepository, MemberService memberService) {
         this.memberrepository = memberrepository;
         this.memberService = memberService;
@@ -40,10 +42,38 @@ public class MemberController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResult> goLogin(@RequestBody loginResponseDto loginMem){
+        try{
+            Integer result =  memberService.login(loginMem);
+            LoginResult loginResult = new LoginResult();
+            loginResult.setMId(result);
+
+
+           if(result >= 0){ //정상적으로 Id값을 가져왔을 때
+               // 0이면 -> 비밀번호 틀림, 1이상이면 -> mid 값
+               return ResponseEntity.ok(loginResult);
+           }else if(result == -1){ // 중복된 멤버가 있을 때
+               return (ResponseEntity<LoginResult>) ResponseEntity.notFound();
+           }else if (result == -2){ //멤버가 없을 때
+
+               return (ResponseEntity<LoginResult>) ResponseEntity.notFound();
+            }else{
+
+               return (ResponseEntity<LoginResult>) ResponseEntity.notFound();
+           }
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
 
 
     }
 }
+
+
 //    @Id
 //    @NotNull
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
