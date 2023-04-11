@@ -4,7 +4,9 @@ import com.example.atchi.Dto.loginResponseDto;
 import com.example.atchi.Dto.memberResponseDto;
 import com.example.atchi.Entity.MemberEntity;
 import com.example.atchi.Repository.MemberRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -16,21 +18,29 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
     //회원등록
-    public void register(memberResponseDto member){
+    public boolean register(memberResponseDto member){
         List<MemberEntity> findMembers = memberRepository.findByEmail(member.getEmail());
 //        //멤버 중복 여부
 //        //중복된 멤버 없음
         if(findMembers.size() <=0){
-            MemberEntity memberEntity = MemberEntity.builder()
-                    .name(member.getName())
-                    .birthday(member.getBirthday())
-                    .email(member.getEmail())
-                    .gender(member.getGender())
-                    .pw(member.getPw()).build();
-            memberRepository.save(memberEntity);
+            try{
+                MemberEntity memberEntity = MemberEntity.builder()
+                        .name(member.getName())
+                        .birthday(member.getBirthday())
+                        .email(member.getEmail())
+                        .gender(member.getGender())
+                        .pw(member.getPw()).build();
+                memberRepository.save(memberEntity);
+                return true;
+            }catch(Exception e){
+                System.out.println(e);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
         }else{
             //중복된 멤버 있음
             System.out.println("실패");
+            return false;
 
         }
     }

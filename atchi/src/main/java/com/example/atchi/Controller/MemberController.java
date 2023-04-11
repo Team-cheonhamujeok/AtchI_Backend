@@ -1,27 +1,31 @@
 package com.example.atchi.Controller;
 
 import com.example.atchi.Dto.*;
+import com.example.atchi.EmailService;
 import com.example.atchi.Entity.MemberEntity;
 import com.example.atchi.Model.LoginResult;
 import com.example.atchi.Repository.MemberRepository;
 import com.example.atchi.Service.MemberService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
-
+@Slf4j
+@RequiredArgsConstructor
 @RestController
 public class MemberController {
     private final MemberRepository memberrepository;
     private final MemberService memberService;
-
-
-    public MemberController(MemberRepository memberrepository, MemberService memberService) {
-        this.memberrepository = memberrepository;
-        this.memberService = memberService;
-    }
+    private final EmailService emailService;
+//    public MemberController(MemberRepository memberrepository, MemberService memberService,EmailService emailService) {
+//        this.memberrepository = memberrepository;
+//        this.memberService = memberService;
+//        this.emailService = emailService;
+//    }
 
     @GetMapping("/")
     public String getTest(){
@@ -36,14 +40,19 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseEntity<String> goSignup(@RequestBody memberResponseDto member){
         try{
-            memberService.register(member);
-            return new ResponseEntity<>(HttpStatus.OK);
+            boolean result = memberService.register(member);
+            if (result) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
         }catch(Exception e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
     }
-
+    //로그인
     @PostMapping("/login")
     public ResponseEntity<LoginResult> goLogin(@RequestBody loginResponseDto loginMem){
         try{
@@ -64,21 +73,24 @@ public class MemberController {
                return new ResponseEntity<>(loginResult,HttpStatus.NOT_FOUND);
            }
         }catch(Exception e){
-            System.out.println(9);
+
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
 
 
     }
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestBody logoutResponseDto logoutMem){
         try{
-
-            return (ResponseEntity<String>) ResponseEntity.ok();
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch(Exception e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            System.out.println(e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
+
+
 }
 
 
