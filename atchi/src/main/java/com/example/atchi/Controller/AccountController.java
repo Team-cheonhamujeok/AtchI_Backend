@@ -18,8 +18,8 @@ public class AccountController {
     @GetMapping("/mailConfirm")
     @ResponseBody
     public mainConfirmResult mailConfirm(@RequestParam String email) throws Exception {
-//        String code = emailService.sendSimpleMessage(email);
-//        log.info("인증코드 : " + code);
+        String code2 = emailService.sendSimpleMessage(email);
+        log.info("인증코드 : " + code2);
         String code = emailService.createKey();
         log.info("인증코드 : " + code);
         mainConfirmResult certificationNumber = new mainConfirmResult();
