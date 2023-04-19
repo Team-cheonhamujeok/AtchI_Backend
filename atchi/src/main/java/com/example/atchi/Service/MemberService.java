@@ -1,6 +1,7 @@
 package com.example.atchi.Service;
 
 import com.example.atchi.Dto.loginResponseDto;
+import com.example.atchi.Dto.logoutResponseDto;
 import com.example.atchi.Dto.memberResponseDto;
 import com.example.atchi.Entity.MemberEntity;
 import com.example.atchi.Repository.MemberRepository;
@@ -18,7 +19,7 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
     //회원등록
-    public boolean register(memberResponseDto member){
+    public String register(memberResponseDto member){
         List<MemberEntity> findMembers = memberRepository.findByEmail(member.getEmail());
 //        //멤버 중복 여부
 //        //중복된 멤버 없음
@@ -31,16 +32,15 @@ public class MemberService {
                         .gender(member.getGender())
                         .pw(member.getPw()).build();
                 memberRepository.save(memberEntity);
-                return true;
+                return "success";
             }catch(Exception e){
-                System.out.println(e);
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                return "DB err";
             }
 
         }else{
             //중복된 멤버 있음
-            System.out.println("실패");
-            return false;
+
+            return "duplicate users";
 
         }
     }
@@ -63,5 +63,11 @@ public class MemberService {
        }else{
            return -3;
        }
+    }
+
+    public Integer logout(logoutResponseDto logoutMember){
+        List<MemberEntity> findMember = memberRepository.findByEmail(logoutMember.getEmail());
+        return findMember.size();
+
     }
 }
