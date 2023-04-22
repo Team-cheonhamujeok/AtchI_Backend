@@ -1,7 +1,7 @@
 package com.example.atchi.Controller;
 
 import com.example.atchi.Dto.*;
-import com.example.atchi.EmailService;
+//import com.example.atchi.EmailService;
 import com.example.atchi.Entity.MemberEntity;
 import com.example.atchi.Model.LoginResult;
 import com.example.atchi.Model.LogoutResult;
@@ -22,7 +22,7 @@ import java.util.Date;
 public class MemberController {
     private final MemberRepository memberrepository;
     private final MemberService memberService;
-    private final EmailService emailService;
+//    private final EmailService emailService;
 //    public MemberController(MemberRepository memberrepository, MemberService memberService,EmailService emailService) {
 //        this.memberrepository = memberrepository;
 //        this.memberService = memberService;
