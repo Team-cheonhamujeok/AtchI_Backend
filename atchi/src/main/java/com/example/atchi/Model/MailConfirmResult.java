@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class mainConfirmResult {
+public class MailConfirmResult {
+    private String message ;
     private String CertificationNumber;
 }

@@ -104,7 +104,7 @@ public class MemberController {
 
 
     }
-    //@RequestBody logoutResponseDto logoutMem ResponseEntity<LogoutResult>  new ResponseEntity<>(logoutResult,HttpStatus.OK);
+
     @PostMapping(value = "/logout")
     public ResponseEntity<LogoutResult> logout(@RequestBody logoutResponseDto logoutMem){
         System.out.println("실실실행");
@@ -134,15 +134,3 @@ public class MemberController {
 
 }
 
-
-//    @Id
-//    @NotNull
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private int id;
-//    @NotNull
-//    private String email;
-//    @NotNull
-//    private String pw;
-//    private Date birthday;
-//    private Boolean gender;
-//    private String name ;
