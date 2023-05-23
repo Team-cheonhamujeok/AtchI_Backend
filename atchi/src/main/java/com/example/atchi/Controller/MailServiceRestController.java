@@ -1,7 +1,6 @@
 package com.example.atchi.Controller;
 
 import com.example.atchi.Model.MailConfirmResult;
-import com.example.atchi.Model.SignupResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +8,16 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.atchi.Service.RegisterMail;
 
+
+//jython
+import org.python.util.PythonInterpreter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 public class MailServiceRestController {
+    private static PythonInterpreter interpreter;
 
     @Autowired
     RegisterMail registerMail;
@@ -31,6 +38,18 @@ public class MailServiceRestController {
             return new ResponseEntity<>(mailConfirmResult,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+    //ai test
+    @GetMapping(value = "/aiTest")
+    public void mailConfirm(){
+        Double[] arr = {0.58,0.369,6.184,9.176,2.150};
+        List<Double[]> list = new ArrayList<>();
+        list.add(arr);
+        list.add(arr);
+//        System.setProperty("python.import.site","false");
+//        interpreter = new PythonInterpreter();
+//        interpreter.execfile("src/main/python/test.py");
+//        interpreter.exec("print(happy(",arr.toString(),"))");
     }
 
 }

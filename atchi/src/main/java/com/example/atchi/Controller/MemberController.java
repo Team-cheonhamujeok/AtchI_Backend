@@ -107,7 +107,6 @@ public class MemberController {
 
     @PostMapping(value = "/logout")
     public ResponseEntity<LogoutResult> logout(@RequestBody logoutResponseDto logoutMem){
-        System.out.println("실실실행");
         LogoutResult logoutResult = new LogoutResult();
         try{
             Integer result = memberService.logout(logoutMem);
