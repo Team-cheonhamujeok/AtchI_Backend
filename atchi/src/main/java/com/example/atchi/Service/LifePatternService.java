@@ -29,6 +29,7 @@ public class LifePatternService {
 
     }
 
+
     public lifePatternResultDto saveLifePattern(ArrayList<lifePatternResponseDto> lifePatternList){
         List<lifePatternEntity> lifePatternEntityList = new ArrayList<>();
         //현재 입력 받은 lifePattern 날짜와 db에 저장된 날짜 사이에 빈 날들 채우기
@@ -40,7 +41,6 @@ public class LifePatternService {
             long diffDate = (lastDate.getTime()-lastEntityDate.getTime())/86400000;
             for(int j = 1 ; j <diffDate;j++){
                 lastEntityDate = getNextDay(lastEntityDate);
-                System.out.println(lastEntityDate);
 //               //entity 생성
                 lifePatternEntity lifePatternE = new lifePatternEntity();
                 //entity set , 나머지는 NAN
@@ -50,14 +50,14 @@ public class LifePatternService {
             }
         }
 
-        lastDate = lifePatternList.get(0).getDate();
+//        lastDate = lifePatternList.get(0).getDate();
         //현재 입력 받은 lifePatternList 저장
         for(int i = 0;i<lifePatternList.size();i++){
 
             // lifePattern list에서 하나 꺼내옴
            lifePatternResponseDto getLifePattern = lifePatternList.get(i);
            Date nowDate  = getLifePattern.getDate();
-            System.out.println("today : "+nowDate);
+//            System.out.println("today : "+nowDate);
            //비워져있는 날짜
             long diffDate = (nowDate.getTime()-lastDate.getTime())/86400000;
             System.out.println("i : " + i + "diffDate : " + diffDate);
@@ -95,11 +95,7 @@ public class LifePatternService {
         resultDto.setMid(lifePatternList.get(0).getMid());
         resultDto.setLpCount(lpCount);
         resultDto.setLastDate(Entity.getDate());
-        if(lpCount>=120){
-            resultDto.setPredictStart(true);
-        }else{
-            resultDto.setPredictStart(false);
-        }
+        resultDto.setPredictStart(lpCount >= 120);
         return resultDto;
     }
 }
