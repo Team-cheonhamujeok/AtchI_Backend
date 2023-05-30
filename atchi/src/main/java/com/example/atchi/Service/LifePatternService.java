@@ -1,5 +1,6 @@
 package com.example.atchi.Service;
 
+import com.example.atchi.Dto.LastDateResponseDto;
 import com.example.atchi.Dto.lifePatternResponseDto;
 import com.example.atchi.Dto.lifePatternResultDto;
 import com.example.atchi.Entity.lifePatternEntity;
@@ -97,5 +98,15 @@ public class LifePatternService {
         resultDto.setLastDate(Entity.getDate());
         resultDto.setPredictStart(lpCount >= 120);
         return resultDto;
+    }
+
+    public LastDateResponseDto findLifePatternLastDate(Integer mid){
+    Date lastDate = lifePatternRepository.findOnlyLastDateByMid(mid);
+    System.out.println("lastDAte : " + lastDate);
+    LastDateResponseDto lastDateResponseDto = new LastDateResponseDto();
+    lastDateResponseDto.setLastDate(lastDate);
+    lastDateResponseDto.setMid(mid);
+    return lastDateResponseDto;
+
     }
 }

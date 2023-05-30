@@ -6,8 +6,7 @@ import lombok.Setter;
 import java.util.Date;
 @Getter
 @Setter
-public class checkQuizResponseDto {
-    private int tqid;
-    private int quizNum;
-    private int mid;
+public class LastDateResponseDto {
+    int mid;
+    Date lastDate;
 }

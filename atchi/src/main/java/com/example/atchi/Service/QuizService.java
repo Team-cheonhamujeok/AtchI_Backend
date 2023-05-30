@@ -1,13 +1,16 @@
 package com.example.atchi.Service;
 
 import com.example.atchi.Dto.TodayQuizResultDto;
+import com.example.atchi.Dto.WeekQuizResponseDto;
 import com.example.atchi.Dto.checkQuizResponseDto;
 import com.example.atchi.Entity.MemberEntity;
 import com.example.atchi.Entity.questionListEntity;
 import com.example.atchi.Entity.todayQuizEntity;
+import com.example.atchi.Entity.weekQuizEntity;
 import com.example.atchi.Repository.MemberRepository;
 import com.example.atchi.Repository.QuizRepository;
 import com.example.atchi.Repository.TodayQuizRepository;
+import com.example.atchi.Repository.WeekQuizRepository;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
@@ -21,10 +24,12 @@ public class QuizService {
     private final QuizRepository quizRepository;
     private final MemberRepository memberRepository;
     private final TodayQuizRepository todayQuizRepository;
-    public QuizService(QuizRepository quizRepository, MemberRepository memberRepository, TodayQuizRepository todayQuizRepository) {
+    private final WeekQuizRepository weekQuizRepository;
+    public QuizService(QuizRepository quizRepository, MemberRepository memberRepository, TodayQuizRepository todayQuizRepository, WeekQuizRepository weekQuizRepository) {
         this.quizRepository = quizRepository;
         this.memberRepository = memberRepository;
         this.todayQuizRepository = todayQuizRepository;
+        this.weekQuizRepository = weekQuizRepository;
     }
 
     public List<MemberEntity> findMember(int mId){
@@ -32,6 +37,95 @@ public class QuizService {
         List<MemberEntity> findMember = memberRepository.findById(mId);
         return findMember;
     }
+
+    //이번주 날짜 구하기
+    public Date findDayOfWeek() throws ParseException {
+        System.out.println("e3");
+        SimpleDateFormat  formatter = new SimpleDateFormat("yyyy-MM-dd");
+        // 오늘 날짜
+        Date startDate = new Date();
+        String date =  formatter.format(startDate);
+        // 4. 기준이 되는 날짜(format에 맞춘)
+        Date setDate = formatter.parse(date);
+        //대한민국 시간
+        Calendar cal = new GregorianCalendar(Locale.KOREA);
+        cal.setTime(setDate);
+        //요일 가져오기
+        Integer dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        System.out.println("e3");
+        //요일에 맞춰 startDate 설정
+        switch (dayOfWeek){
+            case 2: //월
+                break;
+            case 3: //화
+                System.out.println("e3");
+                cal.add(Calendar.DATE, -1);
+                break;
+            case 4: //수
+                cal.add(Calendar.DATE, -2);
+                break;
+            case 5: //목
+                cal.add(Calendar.DATE, -3);
+                break;
+            case 6: //금
+                cal.add(Calendar.DATE, -4);
+                break;
+            case 7: //토
+                cal.add(Calendar.DATE, -5);
+                break;
+            case 1: //일
+                cal.add(Calendar.DATE, -6);
+                System.out.println("today cal.getTime : "+cal.getTime());
+                break;
+        }
+        System.out.println("e3");
+        return cal.getTime();
+    }
+
+
+    //이번주 퀴즈 목록 생성 또는 찾기
+    public WeekQuizResponseDto createNewWeekQuiz(int mid) throws ParseException {
+        try{
+            System.out.println("e21");
+            Date startDate = findDayOfWeek();
+            //이번주 TodayQuiz 목록 가져오기
+            System.out.println("e22");
+            Optional<weekQuizEntity> thisWeekQuiz = weekQuizRepository.findweekQuizByMidAndDate(mid,startDate);
+            System.out.println("e23");
+            System.out.println("thisWeekQuiz : "+thisWeekQuiz);
+            if(thisWeekQuiz.isEmpty()){
+                System.out.println("e24");
+                weekQuizEntity weekQuiz = weekQuizEntity.builder()
+                        .mid(mid).startDate(startDate)
+                        .mon(Boolean.FALSE)
+                        .wed(Boolean.FALSE)
+                        .tue(Boolean.FALSE)
+                        .thu(Boolean.FALSE)
+                        .fri(Boolean.FALSE)
+                        .sat(Boolean.FALSE)
+                        .sun(Boolean.FALSE)
+                        .build();
+                System.out.println("e25");
+                weekQuizRepository.save(weekQuiz);
+                System.out.println("e26");
+                thisWeekQuiz = weekQuizRepository.findweekQuizByMidAndDate(mid,startDate);
+                System.out.println("e27");
+            }
+            System.out.println("e28");
+            System.out.println("thisWeekQuiz : "+thisWeekQuiz);
+
+            //저장된 weekQuiz Entity를 Dto로 옮김
+            WeekQuizResponseDto weekquizDto = new WeekQuizResponseDto(thisWeekQuiz.get().getId(),thisWeekQuiz.get().getMid(),thisWeekQuiz.get().getStartDate(),thisWeekQuiz.get().getMon(),thisWeekQuiz.get().getTue(),thisWeekQuiz.get().getWed(),thisWeekQuiz.get().getThu(),thisWeekQuiz.get().getFri(),thisWeekQuiz.get().getSat(),thisWeekQuiz.get().getSun());
+            System.out.println("e29");
+            return weekquizDto ;
+        }catch (Exception e){
+
+            System.out.println(e.getMessage());
+            throw e;
+        }
+
+    }
+
 
     public TodayQuizResultDto getTodayQuiz(){
 
@@ -141,25 +235,64 @@ public class QuizService {
 
     }
     //퀴즈 풀면 확인
-    public String checkQuiz(checkQuizResponseDto quizResponseDto){
+    public String checkQuiz(checkQuizResponseDto quizResponseDto) throws ParseException{
+
         try{
+            System.out.println("e1");
+            WeekQuizResponseDto weekQuiz = createNewWeekQuiz(quizResponseDto.getMid());
+            System.out.println("e1");
+            Date startDate = new Date();
+            //대한민국 시간
+            Calendar cal = new GregorianCalendar(Locale.KOREA);
+            cal.setTime(startDate);
+            //요일 가져오기
+            Integer dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            System.out.println("e1");
+            switch (dayOfWeek){
+                case 2: //월
+                    weekQuiz.setMon(true);
+                    break;
+                case 3: //화
+                    weekQuiz.setTue(true);
+                    break;
+                case 4: //수
+                    weekQuiz.setWed(true);
+                    break;
+                case 5: //목
+                    weekQuiz.setThu(true);
+                    break;
+                case 6: //금
+                    weekQuiz.setFri(true);
+                    break;
+                case 7: //토
+                    weekQuiz.setSat(true);
+                    break;
+                case 1: //일
+                    weekQuiz.setSun(true);
+                    break;
+            }
+            System.out.println("e1");
+            weekQuizRepository.updateWeekQuiz(weekQuiz.getWqid(),weekQuiz.getMon(),weekQuiz.getTue(),weekQuiz.getWed(),weekQuiz.getThu(),weekQuiz.getFri(),weekQuiz.getSat(),weekQuiz.getSun());
+            System.out.println("e1");
+            //퀴즈 상태 '풀었음'으로 변경
             int num = quizResponseDto.getQuizNum();
+            System.out.println("e1");
             if(num == 1){
                 todayQuizRepository.updateQuiz1Check(quizResponseDto.getTqid(),Boolean.TRUE);
-//                todayQuizEntity.builder().id(quizResponseDto.getTqid()).quiz1check(Boolean.TRUE).build();
             }else if(num == 2){
                 todayQuizRepository.updateQuiz2Check(quizResponseDto.getTqid(),Boolean.TRUE);
-//                todayQuizEntity.builder().id(quizResponseDto.getTqid()).quiz2check(Boolean.TRUE).build();
             }else if(num == 3){
                 todayQuizRepository.updateQuiz3Check(quizResponseDto.getTqid(),Boolean.TRUE);
-//                todayQuizEntity.builder().id(quizResponseDto.getTqid()).quiz2check(Boolean.TRUE).build();
             }
-//            List<todayQuizEntity> selectQuiz = todayQuizRepository.findAll();
+            System.out.println("e1");
             Optional<todayQuizEntity> todayQuiz = todayQuizRepository.findById(quizResponseDto.getTqid());
             int solved = 0;
-            todayQuizEntity todayQuizNoneOptional = todayQuiz.get();
-            if (todayQuizNoneOptional != null){
+            System.out.println("e1");
+            System.out.println(todayQuiz);
+            if (todayQuiz.isEmpty()==false){
+                todayQuizEntity todayQuizNoneOptional = todayQuiz.get();
                 for(int i = 1 ; i<4;i++){
+
                     if (i == 1 && todayQuizNoneOptional.getQuiz1check()){
                         solved +=1;
                     }else if(i == 2 && todayQuizNoneOptional.getQuiz2check()){
@@ -168,6 +301,7 @@ public class QuizService {
                         solved +=1;
                     }
                 }
+                System.out.println("e1");
                 if(solved == 3){
                     todayQuizRepository.updateSolveCheck(quizResponseDto.getTqid(),Boolean.TRUE);
                 }
@@ -177,8 +311,8 @@ public class QuizService {
 
             return "성공";
         }catch(Exception e){
-//            throw e;
-            return "check error";
+            throw e;
+//            return "check error";
         }
     }
     //당일 등록된 퀴즈가 있는지 확인

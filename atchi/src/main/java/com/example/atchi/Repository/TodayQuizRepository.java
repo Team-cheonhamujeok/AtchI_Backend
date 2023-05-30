@@ -33,4 +33,5 @@ public interface TodayQuizRepository extends JpaRepository<todayQuizEntity,Integ
     void updateSolveCheck(Integer tqid ,Boolean check);
 
 
+
 }

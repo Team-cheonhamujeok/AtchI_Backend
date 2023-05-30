@@ -15,4 +15,6 @@ public interface LifePatternRepository extends JpaRepository<lifePatternEntity,I
     lifePatternEntity findFirstByDateByMid(Integer mid);
     @Query(value = "select count(*) from life_pattern where life_pattern.mid = :mid and life_pattern.date >= :startDate ",nativeQuery = true)
     Integer countByMid(Integer mid,Date startDate);
+    @Query(value = "SELECT life_pattern.date FROM life_pattern where life_pattern.mid = :mid order by life_pattern.date desc limit 1",nativeQuery = true)
+    Date findOnlyLastDateByMid(Integer mid);
 }
