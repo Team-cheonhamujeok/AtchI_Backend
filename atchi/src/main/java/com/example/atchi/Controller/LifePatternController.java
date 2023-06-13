@@ -18,9 +18,7 @@ public class LifePatternController {
 
     @PostMapping("/lifePattern")
     public ResponseEntity<lifePatternResultDto> saveLifePattern(@RequestBody ArrayList<lifePatternResponseDto> lifePatternList ){
-//        for(int i = 0 ; i<lifePatternList.size();i++){
-//            System.out.println(lifePatternList.get(i).getDate()+"\n");
-//        }
+
         if(lifePatternList.size() == 0){
             return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
         }

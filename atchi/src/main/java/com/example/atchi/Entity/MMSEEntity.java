@@ -25,7 +25,7 @@ public class MMSEEntity {
 //    )
     @ElementCollection
     @OrderColumn
-    private List<String> questions  = new ArrayList<String>();
+    private List<Integer> questions  = new ArrayList<Integer>();
     private Date date;
     private int reulst;
 }

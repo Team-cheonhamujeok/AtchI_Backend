@@ -238,16 +238,16 @@ public class QuizService {
     public String checkQuiz(checkQuizResponseDto quizResponseDto) throws ParseException{
 
         try{
-            System.out.println("e1");
+
             WeekQuizResponseDto weekQuiz = createNewWeekQuiz(quizResponseDto.getMid());
-            System.out.println("e1");
+
             Date startDate = new Date();
             //대한민국 시간
             Calendar cal = new GregorianCalendar(Locale.KOREA);
             cal.setTime(startDate);
             //요일 가져오기
             Integer dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-            System.out.println("e1");
+
             switch (dayOfWeek){
                 case 2: //월
                     weekQuiz.setMon(true);
@@ -271,12 +271,12 @@ public class QuizService {
                     weekQuiz.setSun(true);
                     break;
             }
-            System.out.println("e1");
+
             weekQuizRepository.updateWeekQuiz(weekQuiz.getWqid(),weekQuiz.getMon(),weekQuiz.getTue(),weekQuiz.getWed(),weekQuiz.getThu(),weekQuiz.getFri(),weekQuiz.getSat(),weekQuiz.getSun());
-            System.out.println("e1");
+
             //퀴즈 상태 '풀었음'으로 변경
             int num = quizResponseDto.getQuizNum();
-            System.out.println("e1");
+
             if(num == 1){
                 todayQuizRepository.updateQuiz1Check(quizResponseDto.getTqid(),Boolean.TRUE);
             }else if(num == 2){
@@ -284,10 +284,10 @@ public class QuizService {
             }else if(num == 3){
                 todayQuizRepository.updateQuiz3Check(quizResponseDto.getTqid(),Boolean.TRUE);
             }
-            System.out.println("e1");
+
             Optional<todayQuizEntity> todayQuiz = todayQuizRepository.findById(quizResponseDto.getTqid());
             int solved = 0;
-            System.out.println("e1");
+
             System.out.println(todayQuiz);
             if (todayQuiz.isEmpty()==false){
                 todayQuizEntity todayQuizNoneOptional = todayQuiz.get();
@@ -297,11 +297,11 @@ public class QuizService {
                         solved +=1;
                     }else if(i == 2 && todayQuizNoneOptional.getQuiz2check()){
                         solved +=1;
-                    }else if(i == 3 && todayQuizNoneOptional.getQuiz2check()){
+                    }else if(i == 3 && todayQuizNoneOptional.getQuiz3check()){
                         solved +=1;
                     }
                 }
-                System.out.println("e1");
+
                 if(solved == 3){
                     todayQuizRepository.updateSolveCheck(quizResponseDto.getTqid(),Boolean.TRUE);
                 }

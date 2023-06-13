@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
+
 @Getter
 @Setter
 public class lifePatternResultDto {
@@ -11,4 +13,5 @@ public class lifePatternResultDto {
     private Date lastDate;
     private int lpCount;
     private boolean predictStart;
+    private List<Double> resultProba;
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 public class MMSEResultDto {
     private int mid;
-    private List<String> questions  = new ArrayList<String>();
+    private List<Integer> questions  = new ArrayList<Integer>();
     private Date date;
     private int result;
 }

@@ -17,11 +17,12 @@ public class MMSEController {
 
 
     @PostMapping("/MMSE")
-    public ResponseEntity<ResultDto> saveMMSE(@RequestBody MMSERequestDto answer){
-        ResultDto result = new ResultDto();
+    public ResponseEntity<MMSESaveResultDto> saveMMSE(@RequestBody MMSERequestDto answer){
+        MMSESaveResultDto result = new MMSESaveResultDto();
         try{
-            mmseService.saveMMSE(answer);
+            PredictResultDto predictResultDto = mmseService.saveMMSE(answer);
             result.setMessage("Success save");
+            result.setResultProba(predictResultDto.getPredictResult());
             return new ResponseEntity<>(result,HttpStatus.OK);
 
         }catch (Exception e){

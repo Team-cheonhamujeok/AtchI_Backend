@@ -1,41 +1,44 @@
 package com.example.atchi.Controller;
 
-import com.example.atchi.Dto.TodayQuizResultDto;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import com.example.atchi.Dto.PredictListResultDto;
+import com.example.atchi.Dto.ReturnDto;
+import com.example.atchi.Service.PredictService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class AiController {
+    private final PredictService predictService;
+
+    public AiController(PredictService predictService) {
+        this.predictService = predictService;
+    }
+
     @GetMapping("/predictionModel")
-    public String predictionModel() throws ParseException {
-        Double[] arr = {0.58,0.369,6.184,9.176,2.150};
-        List<Double[]> list = new ArrayList<>();
-        list.add(arr);
-        list.add(arr);
-//        RestTemplate restTemplate = new RestTemplate(factory);
-//        Integer result = restTemplate.postForObject(BASE_URL + "/employee", request, Employee.class);
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        MediaType mediaType = new MediaType("application", "json", Charset.forName("UTF-8"));
-        headers.setContentType(mediaType);
-        HttpEntity<List<Double[]>> entity = new HttpEntity<>(list, headers);
-        String url = "http://127.0.0.1:5000";
-        String response = restTemplate.postForObject(url, entity, String.class);
-        System.out.println(response);
-        return "hi";
+    @ResponseBody
+    public ResponseEntity<ReturnDto>  predictionModel(@RequestParam Integer mid) throws ParseException {
+        ReturnDto returnDto = new ReturnDto();
+        try{
+
+            List<PredictListResultDto> predictList = predictService.getPredictList(mid);
+            returnDto.setResponse(predictList);
+            returnDto.setSuccess(true);
+            returnDto.setError("");
+            return  new ResponseEntity<ReturnDto>(returnDto, HttpStatus.OK);
+        }catch (Exception e){
+            returnDto.setError(e.getMessage());
+            returnDto.setSuccess(false);
+            return  new ResponseEntity<ReturnDto>(returnDto, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
 
     }
 }

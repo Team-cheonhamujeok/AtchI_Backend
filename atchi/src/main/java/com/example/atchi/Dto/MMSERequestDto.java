@@ -13,6 +13,6 @@ import java.util.List;
 @Setter
 public class MMSERequestDto {
     private int mid;
-    private List<String> questions  = new ArrayList<String>();
+    private List<Integer> questions  = new ArrayList<Integer>();
     private Date date;
 }

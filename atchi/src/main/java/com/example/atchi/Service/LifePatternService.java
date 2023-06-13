@@ -1,13 +1,15 @@
 package com.example.atchi.Service;
 
 import com.example.atchi.Dto.LastDateResponseDto;
+import com.example.atchi.Dto.PredictResultDto;
 import com.example.atchi.Dto.lifePatternResponseDto;
 import com.example.atchi.Dto.lifePatternResultDto;
+import com.example.atchi.Entity.PredictEntity;
 import com.example.atchi.Entity.lifePatternEntity;
 import com.example.atchi.Repository.LifePatternRepository;
+import com.example.atchi.Repository.PredictRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,9 +18,13 @@ import java.util.List;
 @Service("LifePatternService")
 public class LifePatternService {
     private final LifePatternRepository lifePatternRepository;
+    private final PredictService predictService;
+    private final PredictRepository predictRepository;
 
-    public LifePatternService(LifePatternRepository lifePatternRepository) {
+    public LifePatternService(LifePatternRepository lifePatternRepository, PredictService predictService, PredictRepository predictRepository) {
         this.lifePatternRepository = lifePatternRepository;
+        this.predictService = predictService;
+        this.predictRepository = predictRepository;
     }
     // 다음날 구하기
     private java.util.Date getNextDay(java.util.Date today){
@@ -30,12 +36,13 @@ public class LifePatternService {
 
     }
 
-
+    //lifePattern 저장
     public lifePatternResultDto saveLifePattern(ArrayList<lifePatternResponseDto> lifePatternList){
         List<lifePatternEntity> lifePatternEntityList = new ArrayList<>();
         //현재 입력 받은 lifePattern 날짜와 db에 저장된 날짜 사이에 빈 날들 채우기
         lifePatternEntity lastLpEntity = lifePatternRepository.findLastDateByMid(lifePatternList.get(0).getMid());
         Date lastDate = lifePatternList.get(0).getDate();
+
         if(lastLpEntity != null){
             System.out.println("이전 데이터 날짜 : "+lastLpEntity);
             Date lastEntityDate = lastLpEntity.getDate();
@@ -96,7 +103,21 @@ public class LifePatternService {
         resultDto.setMid(lifePatternList.get(0).getMid());
         resultDto.setLpCount(lpCount);
         resultDto.setLastDate(Entity.getDate());
-        resultDto.setPredictStart(lpCount >= 120);
+
+        String resultName = "";
+        if(lpCount >= 120){
+            resultDto.setPredictStart(true);
+            //예측
+            PredictResultDto predictResult = predictService.predictModule(resultDto.getMid());
+            resultDto.setResultProba(predictResult.getPredictResult());
+
+            // 정상, 치매 의심, 치매
+
+        }else{
+            resultDto.setPredictStart(false);
+            resultDto.setResultProba(new ArrayList<>());
+        }
+
         return resultDto;
     }
 
